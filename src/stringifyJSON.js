@@ -1,7 +1,24 @@
-// this is what you would do if you liked things to be easy:
-// var stringifyJSON = JSON.stringify;
-
-// but you don't so you're going to write it from scratch:
 var stringifyJSON = function(obj) {
-  // your code goes here
+    var shifted = obj.shift();
+    if(typeof obj !== "function") {
+	 	if (typeof shifted === "string") {	
+			return shifted.replace(/"/, "") + ", " + stringifyJSON(obj);
+	 	} else if(shifted instanceof Array) {
+	 		return "[" + shifted + "]" + ", " + stringifyJSON(obj);
+	 	} else if(typeof shifted === "boolean") {
+	 		return shifted += "" + ", " + stringifyJSON(obj);
+	 	} else if(typeof shifted === "object"){
+	 		//stringify object
+
+	 	}
+
+	 	if(obj.length === 0) {
+	 	return "finished";
+ 	}
+ 	
+ } else {
+ 	throw new Error("Passed non stringifiable object.");
+ }
+
+
 };
