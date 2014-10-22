@@ -1,33 +1,38 @@
 var stringifyJSON = function(obj) {
-    //var obj = obj.shift();
+  	var typeofObj = typeof(obj);
+	if (typeofObj != 'object' || obj === null) {
+		if (typeofObj == 'string') {
+			obj = '"'+obj+'"';
+		}
+		return String(obj);
+	} else {
+		var holder = [];
+		var arrTest = (obj && obj.constructor === Array);
+		if (arrTest) {
+			for (var i = 0; i < obj.length; i++) {
+				holder.push(typeof(obj[i]) != 'object' ? (typeof(obj[i]) === 'string' ? '"' + String(obj[i]) + '"' : String(obj[i])) : stringifyJSON(obj[i]));
+			}
+			return '[' + holder + ']';
+		} else {
+			for (var key in obj) {
+				var value = obj[key];
+				typeofObj = typeof(value);
+				if (typeofObj === 'string') {
+					value = '"' + value + '"';
+				} else if (typeofObj === 'function') {
+					var x = value();
+					value = (x != 'object' ? x : stringifyJSON(x));
+				} else if (typeofObj === 'object' && value !== null) {
+					value = stringifyJSON(value);
+				}
 
-    if (typeof obj !== "function") {
-	 	if (typeof obj === "string") {	
-			return obj.replace(/"/, "") ;
-	 	} else if (obj instanceof Array) {
-	 		return "[" + obj + "]";
-	 	} else if (typeof obj === "boolean" || typeof obj === "number") {
-	 		return obj += "";
-	 	} else if (typeof obj === "object"){
-	 		var objKeys = Object.keys(obj);
-    		var arr = new Array();
-    			for (var i = 0; i < objKeys.length; i++) {
-        			var str = '"' + objKeys[i] + '":';
-        			var objValue = obj[objKeys[i]];
-        			str = (typeof objValue == "string") ? 
-            		str = str + '"' + objValue + '"' : 
-            		str = str + stringifyJSON(objValue);
-        			arr.push(str);
-    			}
-   					 return "{" + arr.join(",") + "}";
-
- 		} else {
- 			throw new Error("Passed non stringifiable object.");
-	 }
-
-
+				if (value !== undefined) {
+					holder.push('"' + key + '"' + ':' + value);
+				} else if (value === null) {
+					holder.push('"' + key + '"' + ':' + value);
+				}
+			}
+			return ('{' + String(holder) + '}');
+		}
 	}
-}
-
-
-
+};
